@@ -1,3 +1,9 @@
+#*****************************
+#Title: Goodha Hash
+#Author: Aleksandar Damnjanovic
+#Date: 27.11.2021
+#*****************************
+
 import math
 import string
 
@@ -80,13 +86,13 @@ class GoodhaHash:
             e=int(e,16)
             e= e & 0xff
             if count % 7==0:
-                row[count]=row[count]^e
+                row[count]=row[count]-e
             elif count % 5==0:
                 row[count]=row[count]+e
             elif count % 3==0:
                 row[count]=row[count]*e
             else:
-                row[count]=row[count]+(e<<i%7)
+                row[count]=row[count]+(e<<i%3)|(e>>(5))
             count+=1
             if count==64:
                 count=0
