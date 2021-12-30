@@ -2,7 +2,7 @@
 #Title: Goodha Hash
 #Author: Aleksandar Damnjanovic
 #Date: 27.11.2021
-#Last edit: 29.12.2021
+#Last edit: 30.12.2021
 #*****************************
 
 import math
@@ -12,7 +12,7 @@ import struct
 class GoodhaHash:
 
     @staticmethod
-    def hash(input, type='hex'):
+    def hash(input, type='hex', pack= True):
 
         if type=='hex':
             input= hex(input)
@@ -43,6 +43,9 @@ class GoodhaHash:
         value= GoodhaHash._mess(value)
         value= GoodhaHash._cut(value)
         value= GoodhaHash._shift(value)
+
+        if pack:
+            value= GoodhaHash._pack(value)
 
         return '0x'+value
 
@@ -173,9 +176,29 @@ class GoodhaHash:
             if(i!= len(input)-1):
                 e=input[i:i+2]
                 e=int(e,16)
-                e=e<<count
+                e=e<<count|(8-count)>>e
                 count+=1
                 if(count==5):
                     count=0
                 ret+=hex(e)[2:]
         return ret
+
+    @staticmethod
+    def _pack(input):
+        count=0
+        while len(input)>128:
+            s=input[len(input)-16:]
+            input=input[0:len(input)-16]
+            s=int(s,16)
+            t= input[count*16:(count+1)*16]
+            t= int(t, 16)
+            t=t^s
+            t=hex(t)[2:]
+            part1= input[:count*16]
+            part2= input[(count+1)*16:]
+            input= part1 + t + part2
+            count+= 1
+            if count==8:
+                count=1
+
+        return input
